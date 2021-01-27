@@ -31,14 +31,41 @@ type Record struct {
 // 	return nil, nil
 // }
 
-// func Build(records []Record) (*Node, error) {
-
-// 	for _, record := range records {
-// 		parent = Find(
+// func BuildTree(records []Record) (*Node, error) {
+// 	if len(records) == 0 {
+// 		return nil, nil
 // 	}
+// 	sort.Slice(records, func(i, j int) bool {
+// 		return records[i].ID < records[j].ID
+// 	})
+// 	if len(records) != 1 {
+// 		for i := 1; i < len(records); i++ {
+// 			if records[i].ID - 1 != records[i-1].ID {
+// 				return nil, errors.New("non-continuous IDs")
+// 			}
+// 		}
+// 	}
+// 	first := records[0]
+// 	root := &Node{ID: first.ID}
+// 	records = records[1:]
+// 	for _, record := range records {
+// 		newNode := &Node{ID: record.ID}
+// 		parent, res := Find(root, record.Parent)
+// 		if parent != nil && res == nil {
+// 			parent.Children = append(parent.Children, newNode)
+// 		} else {
+// 			return nil, errors.New("Something went wrong")
+// 		}
+
+// 	}
+// 	return nil,nil
 // }
 
 func Build(records []Record) (*Node, error) {
+	return BuildMap(records)
+}
+
+func BuildMap(records []Record) (*Node, error) {
 	if len(records) == 0 {
 		return nil, nil
 	}
