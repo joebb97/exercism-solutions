@@ -15,54 +15,61 @@ type Record struct {
 	Parent int
 }
 
-// func Find(root *Node, ID int) (*Node, error) {
-// 	if root == nil {
-// 		return nil, nil
-// 	}
-// 	if root.ID == ID {
-// 		return root, nil
-// 	}
-// 	for _, child := range root.Children {
-// 		res, ok := Find(child, ID)
-// 		if ok == nil && res != nil {
-// 			return res, ok
-// 		}
-// 	}
-// 	return nil, nil
-// }
+func Find(root *Node, ID int) *Node {
+	if root == nil {
+		return nil
+	}
+	if root.ID == ID {
+		return root
+	}
+	for _, child := range root.Children {
+		res := Find(child, ID)
+		if res != nil {
+			return res
+		}
+	}
+	return nil
+}
 
-// func BuildTree(records []Record) (*Node, error) {
-// 	if len(records) == 0 {
-// 		return nil, nil
-// 	}
-// 	sort.Slice(records, func(i, j int) bool {
-// 		return records[i].ID < records[j].ID
-// 	})
-// 	if len(records) != 1 {
-// 		for i := 1; i < len(records); i++ {
-// 			if records[i].ID - 1 != records[i-1].ID {
-// 				return nil, errors.New("non-continuous IDs")
-// 			}
-// 		}
-// 	}
-// 	first := records[0]
-// 	root := &Node{ID: first.ID}
-// 	records = records[1:]
-// 	for _, record := range records {
-// 		newNode := &Node{ID: record.ID}
-// 		parent, res := Find(root, record.Parent)
-// 		if parent != nil && res == nil {
-// 			parent.Children = append(parent.Children, newNode)
-// 		} else {
-// 			return nil, errors.New("Something went wrong")
-// 		}
+func BuildTree(records []Record) (*Node, error) {
+	if len(records) == 0 {
+		return nil, nil
+	}
+	sort.Slice(records, func(i, j int) bool {
+		return records[i].ID < records[j].ID
+	})
+	if len(records) != 1 {
+		for i := 1; i < len(records); i++ {
+			if records[i].ID-1 != records[i-1].ID {
+				return nil, errors.New("non-continuous IDs")
+			}
+		}
+	}
+	first := records[0]
+	if first.Parent != 0 {
+		return nil, errors.New("root has parent")
+	}
+	root := &Node{ID: first.ID}
+	records = records[1:]
+	for _, record := range records {
+		newNode := &Node{ID: record.ID}
+		parent := Find(root, record.Parent)
+		if parent != nil {
+			parent.Children = append(parent.Children, newNode)
+		} else {
+			return nil, errors.New("Something went wrong")
+		}
 
-// 	}
-// 	return nil,nil
-// }
+	}
+	ok := Find(root, 0)
+	if ok == nil {
+		return nil, errors.New("no root node")
+	}
+	return root, nil
+}
 
 func Build(records []Record) (*Node, error) {
-	return BuildMap(records)
+	return BuildTree(records)
 }
 
 func BuildMap(records []Record) (*Node, error) {
@@ -78,7 +85,7 @@ func BuildMap(records []Record) (*Node, error) {
 	})
 	if len(records) != 1 {
 		for i := 1; i < len(records); i++ {
-			if records[i].ID - 1 != records[i-1].ID {
+			if records[i].ID-1 != records[i-1].ID {
 				return nil, errors.New("non-continuous IDs")
 			}
 		}
