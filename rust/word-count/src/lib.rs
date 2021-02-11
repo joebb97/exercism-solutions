@@ -16,8 +16,8 @@ pub fn prune_word(word: &str) -> String {
 
 /// Count occurrences of words.
 pub fn word_count(words: &str) -> HashMap<String, u32> {
-    let mut counts: HashMap<String, u32> = HashMap::new();
-    let words: String = words
+    let counts: HashMap<String, u32> = HashMap::new();
+    words
         .chars()
         .map(|c: char| {
             if !(c.is_alphanumeric() || c == '\'') {
@@ -26,15 +26,12 @@ pub fn word_count(words: &str) -> HashMap<String, u32> {
                 c
             }
         })
-        .collect();
-    for word in words.split_whitespace() {
-        let pruned = prune_word(word);
-        let new_val = if let Some(&val) = counts.get(&pruned) {
-            val + 1
-        } else {
-            1
-        };
-        counts.insert(pruned, new_val);
-    }
-    counts
+        .collect::<String>()
+        .split_whitespace()
+        .fold(counts, |mut cur_dict, word| {
+            let pruned = prune_word(word);
+            let entry = cur_dict.entry(pruned).or_insert(0);
+            *entry += 1;
+            cur_dict
+        })
 }
