@@ -33,7 +33,7 @@ pub fn is_palindrome(num: u64) -> bool {
     rev == num
 }
 
-pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome)> {
+pub fn palindrome_products_slow(min: u64, max: u64) -> Option<(Palindrome, Palindrome)> {
     let res = (min..=max)
         .map(|left| (left..=max).map(move |right| (left, right)))
         .flatten()
@@ -65,5 +65,36 @@ pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome
                 }
             },
         );
+    res
+}
+
+pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome)> {
+    let mut res: Option<(Palindrome, Palindrome)> = None;
+    for left in min..=max {
+        for right in left..=max {
+            let prod = left * right;
+            if let Some((mut cur_min, mut cur_max)) = res {
+                let cleared = Palindrome::new(left, right);
+                if !is_palindrome(prod) {
+                    res = Some((cur_min, cur_max));
+                    continue;
+                }
+                if prod > cur_max.value() {
+                    cur_max = cleared;
+                } else if prod == cur_max.value() {
+                    cur_max.insert(left, right);
+                } else if prod < cur_min.value() {
+                    cur_min.insert(left, right);
+                } else if prod == cur_min.value() {
+                    cur_min = cleared;
+                }
+                res = Some((cur_min, cur_max));
+            } else {
+                if is_palindrome(prod) {
+                    res = Some((Palindrome::new(left, right), Palindrome::new(left, right)));
+                }
+            };
+        }
+    }
     res
 }
