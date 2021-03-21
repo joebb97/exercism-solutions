@@ -22,7 +22,7 @@ pub fn nucleotide_counts(dna: &str) -> Result<HashMap<char, usize>, char> {
         let thecount = count(c, dna);
         if res.is_err() {
             res
-        } else if let Err(thecount) = thecount  {
+        } else if let Err(thecount) = thecount {
             Err(thecount)
         } else if let (Ok(thecount), Ok(themap)) = (thecount, &mut res) {
             themap.insert(c, thecount);
