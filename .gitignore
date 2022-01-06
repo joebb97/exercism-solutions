@@ -1,3 +1,5 @@
 .exercism
 elm-stuff
 .stack-work
+stack.yaml.lock
+*.cabal
