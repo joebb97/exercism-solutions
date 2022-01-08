@@ -9,4 +9,3 @@ distance xs ys
     cmpc (c1, c2) = fromEnum (c1 /= c2)
     pairings = zip xs ys
     comparisons = map cmpc pairings
-
