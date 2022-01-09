@@ -12,6 +12,5 @@ anagramOf left right
     where asLowerLeft = map toLower left
           asLowerRight = map toLower right
 
--- Comment so I can submit again
 buildCharCounts :: String -> Map Char Integer
 buildCharCounts = fromListWith (+) . map (\c -> (c, 1))
